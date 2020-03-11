@@ -19,8 +19,8 @@ int main()
     LONG retCode;
 
     //std::cout << "Char: " << sizeof(char) << ", My arr: "
-     //<< sizeof(BYTE)*strlen((char*)bptime)+1 << std::endl;
-    std::cout << "Current time: " << bptime << std::endl;
+    //<< sizeof(BYTE)*strlen((char*)bptime)+1 << std::endl;
+    //std::cout << "Current time: " << bptime << std::endl;
     //system("pause");
 
     try
@@ -33,7 +33,14 @@ int main()
                 KEY_SET_VALUE,
                 &hkMykey
         );
-        std::cout << (retCode == 0 ? "Opened Successfully " : "Failed to open") << std::endl;
+        if (retCode != 0 )
+        {
+            std::cout << "Warning! Failed to open your registry value for SmoothScroll"
+            << std::endl << "The error code is: " << retCode << std::endl;
+            system("pause");
+            return (-1);
+        }
+
         //<< std::endl <<  "Handle: " << hkMykey << std::endl;
         //system("pause");
 
@@ -46,9 +53,14 @@ int main()
                 &curReg,
                 &curRegSize
         );
-        std::cout << (retCode == 0 ? "Got value successfully" : "Failed to get a value") << std::endl;
-                  //<< "Key: " << curReg << std::endl
-                  //<< std::endl <<  "Handle: " << hkMykey  << std::endl ;
+        if (retCode != 0 )
+        {
+            std::cout << "Warning! Failed to read your registry value for SmoothScroll"
+                      << std::endl << "The error code is: " << retCode << std::endl;
+            system("pause");
+            RegCloseKey(hkMykey);
+            return -1;
+        }
         //system("pause");
         retCode = RegSetValueExA(
                 hkMykey,
@@ -60,6 +72,12 @@ int main()
         );
         if (retCode == 0)
             std::cout << "Time successfully set to: " << std::string((char*) bptime) << std::endl;
+        else
+        {
+            std::cout << "Warning! Failed to set your registry value for SmoothScroll"
+                      << std::endl << "The error code is: " << retCode << std::endl;
+            system("pause");
+        }
         //system("pause");
         RegCloseKey(hkMykey);
         return 0;
