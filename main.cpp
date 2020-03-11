@@ -41,7 +41,7 @@ int main()
             return (-1);
         }
 
-        //<< std::endl <<  "Handle: " << hkMykey << std::endl;
+        //std::cout << std::endl <<  "Handle: " << hkMykey << std::endl;
         //system("pause");
 
         retCode = ::RegGetValue(
@@ -70,14 +70,13 @@ int main()
                 bptime,
                 sizeof(BYTE)*strlen((char*)bptime)+1
         );
-        if (retCode == 0)
-            std::cout << "Time successfully set to: " << std::string((char*) bptime) << std::endl;
-        else
+        if (retCode != 0)
         {
             std::cout << "Warning! Failed to set your registry value for SmoothScroll"
                       << std::endl << "The error code is: " << retCode << std::endl;
             system("pause");
         }
+        // std::cout << "Time successfully set to: " << std::string((char*) bptime) << std::endl;
         //system("pause");
         RegCloseKey(hkMykey);
         return 0;
