@@ -33,7 +33,7 @@ int main()
                 KEY_SET_VALUE,
                 &hkMykey
         );
-        std::cout << (retCode == 0 ? "Success" : "Failed") << std::endl;
+        std::cout << (retCode == 0 ? "Opened Successfully " : "Failed to open") << std::endl;
         //<< std::endl <<  "Handle: " << hkMykey << std::endl;
         system("pause");
 
@@ -46,9 +46,9 @@ int main()
                 &curReg,
                 &curRegSize
         );
-        std::cout << retCode << std::endl
-                  << "Key: " << curReg << std::endl
-                  << std::endl <<  "Handle: " << hkMykey  << std::endl ;
+        std::cout << (retCode == 0 ? "Got value successfully" : "Failed to get a value") << std::endl;
+                  //<< "Key: " << curReg << std::endl
+                  //<< std::endl <<  "Handle: " << hkMykey  << std::endl ;
         system("pause");
         retCode = RegSetValueExA(
                 hkMykey,
@@ -58,11 +58,9 @@ int main()
                 bptime,
                 sizeof(BYTE)*strlen((char*)bptime)+1
         );
-        std::cout << retCode << std::endl
-                  << "Time: " << std::string((char*)bptime) << std::endl;
+        if (retCode == 0)
+            std::cout << "Time successfully set to: " << std::string((char*) bptime) << std::endl;
         system("pause");
-
-
         RegCloseKey(hkMykey);
         return 0;
     }
