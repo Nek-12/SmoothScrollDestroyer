@@ -82,6 +82,9 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/ender/Archive/Coding/SmoothScrollDestroyer/WinReg.hpp">
+			<Option target="SmoothScrollDestroyer"/>
+		</Unit>
 		<Unit filename="C:/Users/ender/Archive/Coding/SmoothScrollDestroyer/main.cpp">
 			<Option target="SmoothScrollDestroyer"/>
 		</Unit>

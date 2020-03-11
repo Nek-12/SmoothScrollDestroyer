@@ -1,51 +1,76 @@
 #include <cassert>
 #include <vector>
-#include <cstdio>
 #include <windows.h>
 #include <string>
 #include <ctime>
 #include <iostream>
 
-std::string GetTime() { return std::to_string(time(nullptr) ); }
+std::string GetTime() {return std::to_string(std::time(nullptr)); }
 
 int main()
 {
-    const char key[]{"\\Software\\SmoothScroll"};
-    const char value[]{"kSSInstallDate"};
-    DWORD dwErrMessageId = 0;
-    LPTSTR lpErrCodeStr = nullptr;
-    va_list result_state[1] = {ERROR_SUCCESS};
-    PHKEY phkResult = nullptr;
+    const char* key = "SOFTWARE\\SmoothScroll";
+    const char* val = "kSSInstallDate";
+    //BYTE* bptime = (BYTE*)malloc(strlen(time.c_str()));
+    BYTE* bptime = (BYTE*)GetTime().c_str();
+
+    DWORD curReg = 0;
+    DWORD curRegSize = sizeof(curReg)*5;
+    LONG retCode;
+
+    //std::cout << "Char: " << sizeof(char) << ", My arr: "
+     //<< sizeof(BYTE)*strlen((char*)bptime)+1 << std::endl;
+     std::cout << "Current time: " << bptime << std::endl;
     system("pause");
+
     try
     {
-       if (RegOpenKeyExA(HKEY_CURRENT_USER, key, 0, KEY_SET_VALUE, phkResult)  != ERROR_SUCCESS ) throw result_state;
-
-        system("pause");
-        std::cout << RegSetKeyValueA(
-                *phkResult,
+        HKEY hkMykey = nullptr;
+        retCode = ::RegOpenKeyExA(
+                HKEY_CURRENT_USER,
                 key,
-                value,
-                REG_SZ,
-                GetTime().c_str(),
-                sizeof(value) / sizeof(*value)
-                    );
+                0,
+                KEY_SET_VALUE,
+                &hkMykey
+        );
+        std::cout << (retCode == 0 ? "Success" : "Failed") << std::endl;
+        //<< std::endl <<  "Handle: " << hkMykey << std::endl;
         system("pause");
+
+        retCode = ::RegGetValue(
+                HKEY_CURRENT_USER,
+                key,
+                val,
+                RRF_RT_REG_SZ,
+                nullptr,
+                &curReg,
+                &curRegSize
+        );
+        std::cout << retCode << std::endl
+                  << "Key: " << curReg << std::endl
+                  << std::endl <<  "Handle: " << hkMykey  << std::endl ;
+        system("pause");
+        retCode = RegSetValueExA(
+                hkMykey,
+                val,
+                0,
+                REG_SZ,
+                bptime,
+                sizeof(BYTE)*strlen((char*)bptime)+1
+        );
+        std::cout << retCode << std::endl
+                  << "Time: " << std::string((char*)bptime) << std::endl;
+        system("pause");
+
+
+        RegCloseKey(hkMykey);
+        return 0;
     }
     catch (...)
     {
-        std::cerr << FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,
-                                    nullptr,
-                                    dwErrMessageId,
-                                    0,
-                                    lpErrCodeStr,
-                                    1,
-                                    result_state) << std::endl;
-        std::cerr << *lpErrCodeStr << std::endl;
+        std::cerr << "Unhandled exception" << std::endl;
         system("pause");
         return(-1);
     }
-    std::cout << "Changed the value to " << GetTime() << std::endl;
-    system("pause");
-    return 0;
+
 }
